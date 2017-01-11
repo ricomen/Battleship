@@ -48,7 +48,18 @@ var model = {
           }
           return true;
         }
-      }
+      },
+      generateShipLocations: function() {
+        var locations;
+        for ( var i = 0; i < this.numShips; i++) {
+          do {
+            locations = this.generateShip();
+          } while ( this.collision(locations) );
+          this.ships[i].locations = locations;
+        }
+      },
+      generateShip: function() {},
+      collision: function () {}
 };
 
 var controller = {
@@ -87,11 +98,22 @@ function parseGuess(guess) {
 function init() {
   var fireButton = document.getElementById("fireButton");
   fireButton.onclick = handleFireButton;
+  var guessInput = document.getElementById("guessInput");
+  guessInput.onkeypress = handleKeyPress;
+
 }
 function handleFireButton() {
   var guessInput = document.getElementById("guessInput");
-  var guess = guessInput.value;
+  var guess = guessInput.value.toUpperCase();
   controller.processGuess(guess);
   guessInput.value = "";
+}
+
+function handleKeyPress(e) {
+  var fireButton = document.getElementById("fireButton");
+  if ( e.keyCode === 13 ) {
+    fireButton.click();
+    return false;
+  }
 }
 window.onload = init;
