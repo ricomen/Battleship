@@ -50,9 +50,48 @@ var model = {
         }
       }
 };
+
 var controller = {
         guesses: 0,
-  processGuesee: function(guess) {
-    
+  processGuess: function(guess) {
+    var location = parseGuess(guess);
+    if ( location ) {
+      this.guesses++;
+      var hit = model.fire(location);
+      if ( hit && model.shipsSunk === model.numShips ) {
+        view.displayMessage("You sank all my battleships, in " + this.guesses + " guesses");
+      }
+    }
   }
 }
+
+function parseGuess(guess) {
+  var alphabet = ["A", "B", "C", "D", "E", "F", "G"];
+
+  if ( guess === null || guess.length !== 2 ) {
+    alert("Ups, please enter a letter a nd number on the board");
+  } else {
+    firstChar = guess.charAt(0);
+    var row = alphabet.indexOf(firstChar);
+    var column = guess.charAt(1);
+
+    if( isNaN(row) || isNaN(column) ) {
+      alert("Ups, that isn't on the board.");
+    } else if ( row < 0 || row >= model.boardSize || column < 0 || column >= model.boardSize ) {
+        alert("Ups, that's off the board!");
+      } else return row + column;
+    }
+  return null;
+  }
+
+function init() {
+  var fireButton = document.getElementById("fireButton");
+  fireButton.onclick = handleFireButton;
+}
+function handleFireButton() {
+  var guessInput = document.getElementById("guessInput");
+  var guess = guessInput.value;
+  controller.processGuess(guess);
+  guessInput.value = "";
+}
+window.onload = init;
